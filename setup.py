@@ -194,7 +194,7 @@ class GeneratePyProtos(setuptools.Command):
         sys.stderr.write('cannot find required file: %s\n' % source)
         sys.exit(-1)
 
-      protoc_command = [self._protoc, '-I.', '--python_out=.', source]
+      protoc_command = [self._protoc, '-I.', '-I/usr/local/include', '--python_out=.', source]
       if subprocess.call(protoc_command) != 0:
         sys.exit(-1)
 
@@ -220,9 +220,10 @@ class BuildBinaryGraphs(build_ext.build_ext):
         'face_detection/face_detection_short_range_cpu',
         'face_detection/face_detection_full_range_cpu',
         'face_landmark/face_landmark_front_cpu',
-        'hand_landmark/hand_landmark_tracking_cpu',
-        'holistic_landmark/holistic_landmark_cpu', 'objectron/objectron_cpu',
-        'pose_landmark/pose_landmark_cpu',
+        'hand_landmark/hand_landmark_tracking_gpu',
+        'holistic_landmark/holistic_landmark_gpu',
+        'objectron/objectron_cpu',
+        'pose_landmark/pose_landmark_gpu'
         'selfie_segmentation/selfie_segmentation_cpu'
     ]
     for binary_graph in binary_graphs:
@@ -237,8 +238,15 @@ class BuildBinaryGraphs(build_ext.build_ext):
         'bazel',
         'build',
         '--compilation_mode=opt',
-        '--copt=-DNDEBUG',
-        '--define=MEDIAPIPE_DISABLE_GPU=1',
+        '--config=cuda',
+        '--spawn_strategy=local',
+        '--define=no_gcp_support=true',
+        '--define=no_aws_support=true',
+        '--define=no_nccl_support=true',
+        '--copt=-DMESA_EGL_NO_X11_HEADERS',
+        '--copt=-DEGL_NO_X11',
+        '--local_ram_resources=4096',
+        '--local_cpu_resources=3',
         '--action_env=PYTHON_BIN_PATH=' + _normalize_path(sys.executable),
         os.path.join('mediapipe/modules/', graph_path),
     ]
@@ -290,15 +298,23 @@ class BuildExtension(build_ext.build_ext):
   def _build_binary(self, ext):
     if not os.path.exists(self.build_temp):
       os.makedirs(self.build_temp)
-    bazel_command = [
+    bazel_command =     bazel_command = [
         'bazel',
         'build',
         '--compilation_mode=opt',
-        '--copt=-DNDEBUG',
-        '--define=MEDIAPIPE_DISABLE_GPU=1',
+        '--config=cuda',
+        '--spawn_strategy=local',
+        '--define=no_gcp_support=true',
+        '--define=no_aws_support=true',
+        '--define=no_nccl_support=true',
+        '--copt=-DMESA_EGL_NO_X11_HEADERS',
+        '--copt=-DEGL_NO_X11',
+        '--local_ram_resources=4096',
+        '--local_cpu_resources=3',
         '--action_env=PYTHON_BIN_PATH=' + _normalize_path(sys.executable),
         str(ext.bazel_target + '.so'),
     ]
+
     if not self.link_opencv and not IS_WINDOWS:
       bazel_command.append('--define=OPENCV=source')
     if subprocess.call(bazel_command) != 0:

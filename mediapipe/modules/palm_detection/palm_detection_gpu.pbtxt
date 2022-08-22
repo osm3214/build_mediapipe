@@ -17,11 +17,23 @@ input_side_packet: "MODEL_COMPLEXITY:model_complexity"
 # this packet so that they don't wait for it unnecessarily.
 output_stream: "DETECTIONS:detections"
 
+node: {
+  calculator: "ColorConvertCalculator"
+  input_stream: "RGB_IN:image"
+  output_stream: "RGBA_OUT:image_rgba"
+}
+
+node: {
+  calculator: "ImageFrameToGpuBufferCalculator"
+  input_stream: "image_rgba"
+  output_stream: "image_gpu"
+}
+
 # Transforms an image into a 256x256 tensor while keeping the aspect ratio, and
 # therefore may result in potential letterboxing.
 node {
   calculator: "ImageToTensorCalculator"
-  input_stream: "IMAGE_GPU:image"
+  input_stream: "IMAGE_GPU:image_gpu"
   output_stream: "TENSORS:input_tensor"
   output_stream: "LETTERBOX_PADDING:letterbox_padding"
   options: {
