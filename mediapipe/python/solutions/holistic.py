@@ -113,7 +113,7 @@ class Holistic(SolutionBase):
     """
     _download_oss_pose_landmark_model(model_complexity)
     super().__init__(
-        binary_graph_path=BINARYPB_FILE_PATH,
+        binary_graph_path=_BINARYPB_FILE_PATH,
         side_inputs={
             'model_complexity': model_complexity,
             'smooth_landmarks': smooth_landmarks and not static_image_mode,

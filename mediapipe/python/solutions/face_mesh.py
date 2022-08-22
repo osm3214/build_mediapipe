@@ -85,7 +85,7 @@ class FaceMesh(SolutionBase):
         https://solutions.mediapipe.dev/face_mesh#min_tracking_confidence.
     """
     super().__init__(
-        binary_graph_path=BINARYPB_FILE_PATH,
+        binary_graph_path=_BINARYPB_FILE_PATH,
         side_inputs={
             'num_faces': max_num_faces,
         },
