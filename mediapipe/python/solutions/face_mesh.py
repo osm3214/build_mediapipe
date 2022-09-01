@@ -90,12 +90,7 @@ class FaceMesh(SolutionBase):
             'num_faces': max_num_faces,
         },
         calculator_params={
-            'ConstantSidePacketCalculator.packet': [
-                constant_side_packet_calculator_pb2
-                .ConstantSidePacketCalculatorOptions.ConstantSidePacket(
-                    bool_value=not static_image_mode)
-            ],
-            'facedetectionfrontgpu__TensorsToDetectionsCalculator.min_score_thresh':
+            'facedetectionshortrangegpu__facedetectionshortrange__facedetection__TensorsToDetectionsCalculator.min_score_thresh':
                 min_detection_confidence,
             'facelandmarkgpu__ThresholdingCalculator.threshold':
                 min_tracking_confidence,

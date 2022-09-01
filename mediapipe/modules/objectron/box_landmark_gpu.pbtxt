@@ -4,7 +4,9 @@ type: "BoxLandmarkSubgraph"
 
 input_stream: "IMAGE:image"
 input_stream: "NORM_RECT:box_rect"
+input_side_packet: "MODEL:model"
 output_stream: "NORM_LANDMARKS:box_landmarks"
+
 
 # Extracts image size from the input images.
 node {
@@ -58,6 +60,7 @@ node {
 node {
   calculator: "InferenceCalculator"
   input_stream: "TENSORS:image_tensor"
+  input_side_packet: "MODEL:model"
   output_stream: "TENSORS:output_tensors"
   options: {
     [mediapipe.InferenceCalculatorOptions.ext] {
@@ -65,6 +68,8 @@ node {
       delegate { gpu {} }
     }
   }
+}
+
 }
 
 # Splits a vector of tensors to multiple vectors according to the ranges
