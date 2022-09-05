@@ -134,7 +134,6 @@ node {
 # calculator ensures that the output box_rects vector doesn't contain
 # overlapping regions based on the specified min_similarity_threshold.
 node {
-node {
   calculator: "AssociationNormRectCalculator"
   input_stream: "box_rects_from_detections"
   input_stream: "gated_prev_box_rects_from_landmarks"
