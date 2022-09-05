@@ -70,8 +70,6 @@ node {
   }
 }
 
-}
-
 # Splits a vector of tensors to multiple vectors according to the ranges
 # specified in option.
 node {
